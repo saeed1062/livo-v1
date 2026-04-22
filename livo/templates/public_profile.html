@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-simple roommate-theme">
+    <div class="container small-container">
+        <!-- PROFILE HEADER -->
+        <div class="profile-header-card">
+            <div class="profile-main">
+                <div class="profile-photo-wrapper">
+                    {% if target_user.profile_image %}
+                        <img src="{{ target_user.profile_image.url }}" alt="{{ target_user.username }}" class="profile-photo">
+                    {% else %}
+                        <div class="profile-photo-fallback">
+                            <span>{{ target_user.first_name|first|default:target_user.username|first|upper }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="profile-details">
+                    <span class="role-badge">{{ target_user.get_role_display }}</span>
+                    <h1>{{ target_user.get_full_name|default:target_user.username }}</h1>
+                    <p class="user-meta" style="margin-top: 8px;">
+                        {% if avg_rating %}
+                            <strong style="color: #ff9f43; font-size: 1.1rem;">{{ avg_rating }} ⭐</strong> ({{ reviews.count }} reviews)
+                        {% else %}
+                            <span style="color: #64748b; font-style: italic;">No reviews yet</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="profile-actions">
+                <a href="{{ target_user.contact_link|default:'#' }}" target="_blank" class="btn btn-primary create-post-btn">Contact {{ target_user.first_name }}</a>
+            </div>
+        </div>
+
+        {% if target_user.role == 'ROOMMATE' %}
+        <!-- LIFESTYLE PREFERENCES -->
+        <div class="data-section">
+            <div class="section-top">
+                <h3>Lifestyle Matrix</h3>
+                <p>Preferences and habits</p>
+            </div>
+            <div class="tag-list">
+                {% if profile and profile.preferences.all %}
+                    {% for pref in profile.preferences.all %}
+                        <span class="livo-tag">{{ pref.name }}</span>
+                    {% endfor %}
+                {% else %}
+                    <p class="empty-text">No preferences explicitly set.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% elif target_user.role == 'HOUSE_HELP' %}
+        <!-- HOUSE HELP SKILLS -->
+        <div class="data-section">
+            <div class="section-top">
+                <h3>Offered Services</h3>
+            </div>
+            <div class="tag-list">
+                {% if profile and profile.skills.all %}
+                    {% for skill in profile.skills.all %}
+                        <span class="livo-tag" style="background:#fff1f2; color:#ff4757; border-color:#fda4af;">{{ skill.name }}</span>
+                    {% endfor %}
+                {% else %}
+                    <p class="empty-text">No specific services explicitly set.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- REVIEWS SECTION -->
+        <div class="data-section mt-30">
+            <div class="section-top">
+                <h3>Reviews</h3>
+                <p>What people say about {{ target_user.first_name }}</p>
+            </div>
+            
+            <div class="review-list">
+                {% for review in reviews %}
+                    <div class="review-card" style="padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <strong style="color: #0f172a;">{{ review.reviewer.get_full_name|default:review.reviewer.username }}</strong>
+                            <span style="color: #ff9f43; font-weight: bold;">{{ review.rating }} ⭐</span>
+                        </div>
+                        <p style="color: #475569; margin: 0; line-height: 1.5; font-size: 0.95rem;">"{{ review.comment }}"</p>
+                        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 12px;">{{ review.created_at|date:"M d, Y" }}</div>
+                    </div>
+                {% empty %}
+                    <p class="empty-text">This user has not received any reviews yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .mt-30 { margin-top: 30px; }
+    
+    .dashboard-simple { background: #fafbfc; min-height: 90vh; padding: 60px 0; font-family: 'Inter', sans-serif; }
+    .small-container { max-width: 800px; margin: 0 auto; }
+
+    .profile-header-card { background: white; border-radius: 24px; padding: 40px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+    .profile-main { display: flex; align-items: center; gap: 24px; }
+    
+    .profile-photo-wrapper { width: 90px; height: 90px; }
+    .profile-photo { width: 100%; height: 100%; border-radius: 24px; object-fit: cover; }
+    .profile-photo-fallback { width: 100%; height: 100%; background: #1877f2; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.2rem; font-weight: 800; }
+
+    .role-badge { background: #e0e7ff; color: #4338ca; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; margin-bottom: 8px; display: inline-block; }
+    .profile-details h1 { font-size: 1.8rem; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.5px; }
+
+    .data-section { background: white; border-radius: 24px; padding: 40px; border: 1px solid #e2e8f0; }
+    .section-top { margin-bottom: 24px; }
+    .section-top h3 { font-size: 1.2rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+    .section-top p { font-size: 0.9rem; color: #64748b; margin: 0; }
+
+    .tag-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .livo-tag { background: #f1f5f9; color: #475569; padding: 8px 16px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; border: 1px solid #e2e8f0; }
+
+    .btn { padding: 12px 24px; border-radius: 12px; font-weight: 700; text-decoration: none; text-align: center; font-size: 0.9rem; display: inline-block; cursor: pointer; }
+    .btn-primary { background: #1877f2; color: white; border: none; }
+</style>
+{% endblock %}
