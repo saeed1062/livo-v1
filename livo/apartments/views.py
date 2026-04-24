@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import ApartmentForm
-from posts.models import ResidentRecord
+from .models import ResidentRecord
 
 @login_required
 def add_apartment(request):
@@ -76,17 +76,21 @@ def join_apartment(request):
                 messages.success(request, f"Success! {apartment.name} has been registered as your property.")
             else:
                 # Roommates join as residents
-                if ResidentRecord.objects.filter(resident=request.user, apartment=apartment).exists():
+                if ResidentRecord.objects.filter(resident=request.user, apartment=apartment, is_active=True).exists():
                     messages.warning(request, f"You are already registered to {apartment.name}.")
                     return redirect('dashboard')
+                
                 if apartment.owner == request.user:
                     messages.warning(request, "You already own this property.")
                     return redirect('dashboard')
-                ResidentRecord.objects.create(
+                
+                # Update or create the residency record to handle rejoining
+                record, created = ResidentRecord.objects.update_or_create(
                     resident=request.user,
                     apartment=apartment,
-                    is_active=True
+                    defaults={'is_active': True}
                 )
+                
                 messages.success(request, f"Success! You have joined {apartment.name}.")
 
         except Apartment.DoesNotExist:
@@ -106,4 +110,17 @@ def leave_apartment(request, apartment_id):
             messages.success(request, f"You have left the apartment.")
         else:
             messages.error(request, "You are not an active resident of this apartment.")
+    return redirect('dashboard')
+
+@login_required
+def remove_ownership(request, apartment_id):
+    if request.method == 'POST':
+        from .models import Apartment
+        apartment = Apartment.objects.filter(id=apartment_id, owner=request.user).first()
+        if apartment:
+            apartment.owner = None
+            apartment.save()
+            messages.success(request, f"You have removed '{apartment.name}' from your managed properties.")
+        else:
+            messages.error(request, "You do not own this apartment.")
     return redirect('dashboard')

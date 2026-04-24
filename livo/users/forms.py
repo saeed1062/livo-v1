@@ -49,6 +49,12 @@ class UserSignUpForm(UserCreationForm):
         widget=forms.CheckboxSelectMultiple
     )
 
+    expected_salary = forms.IntegerField(
+        required=False,
+        min_value=0,
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter expected salary (e.g. 8000)', 'class': 'form-control'})
+    )
+
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ("first_name", "last_name", "email", "role", "gender", "username", "phone", "profile_image", "contact_link")

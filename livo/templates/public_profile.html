@@ -53,8 +53,18 @@
         {% elif target_user.role == 'HOUSE_HELP' %}
         <!-- HOUSE HELP SKILLS -->
         <div class="data-section">
-            <div class="section-top">
-                <h3>Offered Services</h3>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                <div class="section-top" style="margin-bottom: 0;">
+                    <h3>Offered Services</h3>
+                    <p>Professional skills & expertise</p>
+                </div>
+                {% if profile.expected_salary %}
+                <div class="salary-badge" style="text-align: right;">
+                    <span style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 2px;">Expected Salary</span>
+                    <strong style="font-size: 1.25rem; color: #ff4757;">৳{{ profile.expected_salary }}</strong>
+                    <small style="color: #94a3b8; font-weight: 500;">/mo</small>
+                </div>
+                {% endif %}
             </div>
             <div class="tag-list">
                 {% if profile and profile.skills.all %}

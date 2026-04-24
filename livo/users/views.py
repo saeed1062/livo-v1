@@ -53,7 +53,7 @@ def dashboard(request):
     
     if user.role == 'ROOMMATE':
         context['profile'] = LifestylePreference.objects.filter(user=user).first()
-        from posts.models import ResidentRecord
+        from apartments.models import ResidentRecord
         
         # Fetch active residencies to show linked apartments
         residencies = ResidentRecord.objects.filter(resident=user, is_active=True).select_related('apartment')
@@ -79,7 +79,7 @@ def dashboard(request):
     elif user.role == 'HOUSE_OWNER':
         # Fetch owned apartments
         from apartments.models import Apartment
-        from posts.models import ResidentRecord
+        from apartments.models import ResidentRecord
         context['owned_apartments'] = Apartment.objects.filter(owner=user)
         return render(request, 'dashboards/owner.html', context)
     elif user.role == 'HOUSE_HELP':
@@ -88,7 +88,7 @@ def dashboard(request):
     elif user.role == 'VENDOR':
         return render(request, 'dashboards/vendor.html', context)
         
-    return render(request, 'dashboard.html', context)
+    return redirect('landing')
 
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
@@ -132,7 +132,11 @@ def signup(request):
             
             elif role == 'HOUSE_HELP':
                 # Create Househelp Profile and link skills
-                profile = Househelp.objects.create(user=user)
+                expected_salary = form.cleaned_data.get('expected_salary') or 0
+                profile, created = Househelp.objects.update_or_create(
+                    user=user, 
+                    defaults={'expected_salary': expected_salary}
+                )
                 selected_skills = form.cleaned_data.get('skills')
                 if selected_skills:
                     profile.skills.set(selected_skills)
@@ -140,6 +144,8 @@ def signup(request):
             # 3. Log the user in and redirect
             login(request, user)
             return redirect('landing')
+        else:
+            print(f"DEBUG: Signup Form Errors: {form.errors}")
     else:
         form = UserSignUpForm()
     

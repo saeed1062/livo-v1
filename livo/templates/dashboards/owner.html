@@ -36,6 +36,16 @@
             </div>
         </div>
 
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert" style="padding: 16px; margin-bottom: 24px; border-radius: 12px; font-weight: 500; {% if message.tags == 'success' %}background:#d1fae5; color:#065f46; border:1px solid #a7f3d0;{% else %}background:#fee2e2; color:#991b1b; border:1px solid #fecaca;{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <div class="data-section">
             <div class="section-top">
                 <h3>Verification & Status</h3>
@@ -71,6 +81,12 @@
                             <h4>{{ apartment.name }}</h4>
                             <span class="building-location">{{ apartment.area }}, {{ apartment.city }}</span>
                         </div>
+                        <div class="building-actions" style="margin-left: auto; margin-right: 20px;">
+                            <form action="{% url 'remove_ownership' apartment.id %}" method="POST" style="margin: 0;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger compact" onclick="return confirm('Are you sure you want to remove your ownership from this apartment?');">Remove</button>
+                            </form>
+                        </div>
                         <div class="building-id-badge">
                             <span class="id-label">ID</span>
                             <span class="id-number">LIVO-{{ apartment.id|stringformat:"04d" }}</span>
@@ -88,16 +104,6 @@
                 <h3>Claim an Existing Building</h3>
                 <p>Has a building been registered without an owner? Enter the Building ID to claim it as your property.</p>
             </div>
-
-            {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-                        <div class="alert" style="padding: 12px; margin-bottom: 20px; border-radius: 8px; {% if message.tags == 'success' %}background:#d1fae5; color:#065f46;{% else %}background:#fee2e2; color:#991b1b;{% endif %}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
 
             <div class="join-building-box">
                 <h4>Enter Building ID</h4>

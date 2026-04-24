@@ -67,18 +67,3 @@ class Post(models.Model):
 
     def __str__(self):
         return f"[{self.get_type_display()}] {self.title}"
-
-class ResidentRecord(models.Model):
-    resident = models.ForeignKey(User, on_delete=models.CASCADE, related_name='residencies')
-    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='residents')
-    start_date = models.DateField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        verbose_name = "Resident Record"
-        verbose_name_plural = "Resident Records"
-        unique_together = ('resident', 'apartment', 'is_active')
-
-    def __str__(self):
-        status = "Active" if self.is_active else "Former"
-        return f"{self.resident.username} at {self.apartment.name} ({status})"
