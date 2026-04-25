@@ -39,7 +39,20 @@
         </div>
 
         {% if target_user.role == 'ROOMMATE' %}
+        {% if profile.bio %}
+        <!-- USER BIO -->
+        <div class="data-section" style="margin-bottom: 24px;">
+            <div class="section-top">
+                <h3>About {{ target_user.first_name }}</h3>
+            </div>
+            <p style="color: #475569; line-height: 1.6; font-style: italic; border-left: 3px solid #ff4757; padding-left: 15px;">
+                "{{ profile.bio }}"
+            </p>
+        </div>
+        {% endif %}
+
         <!-- LIFESTYLE PREFERENCES -->
+
         <div class="data-section">
             <div class="section-top">
                 <h3>Lifestyle Matrix</h3>
