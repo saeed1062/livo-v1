@@ -2,20 +2,48 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from users.forms import UserSignUpForm, ProfileUpdateForm
+from users.forms import UserSignUpForm, ProfileUpdateForm, LifestylePreferenceForm
 from users.models import LifestylePreference, PreferenceTag
 from househelp.models import Househelp
 
+from househelp.forms import HousehelpProfileForm
+
 @login_required
 def edit_profile(request):
+    user = request.user
+    profile_instance = None
+    profile_form_class = None
+    
+    if user.role == 'HOUSE_HELP':
+        profile_instance = getattr(user, 'househelp', None)
+        profile_form_class = HousehelpProfileForm
+    elif user.role == 'ROOMMATE':
+        profile_instance = getattr(user, 'lifestyle_preference', None)
+        profile_form_class = LifestylePreferenceForm
+
+    
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=user)
+        profile_form = None
+        if profile_form_class:
+            profile_form = profile_form_class(request.POST, instance=profile_instance)
+        
+        if form.is_valid() and (not profile_form or profile_form.is_valid()):
             form.save()
+            if profile_form:
+                profile_form.save()
             return redirect('dashboard')
     else:
-        form = ProfileUpdateForm(instance=request.user)
-    return render(request, 'edit_profile.html', {'form': form})
+        form = ProfileUpdateForm(instance=user)
+        profile_form = None
+        if profile_form_class:
+            profile_form = profile_form_class(instance=profile_instance)
+            
+    return render(request, 'edit_profile.html', {
+        'form': form,
+        'profile_form': profile_form
+    })
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -45,11 +73,16 @@ def dashboard(request):
     user_reviews = user.received_reviews.all().order_by('-created_at')
     avg_rating = user_reviews.aggregate(Avg('rating'))['rating__avg']
     
+    from posts.models import Post
+    user_posts = Post.objects.filter(user=user).order_by('-created_at')
+    
     context = {
         'user': user,
         'user_reviews': user_reviews,
         'avg_rating': round(avg_rating, 1) if avg_rating else None,
+        'user_posts': user_posts,
     }
+
     
     if user.role == 'ROOMMATE':
         context['profile'] = LifestylePreference.objects.filter(user=user).first()
@@ -133,13 +166,21 @@ def signup(request):
             elif role == 'HOUSE_HELP':
                 # Create Househelp Profile and link skills
                 expected_salary = form.cleaned_data.get('expected_salary') or 0
+                city = form.cleaned_data.get('city') or ""
+                area = form.cleaned_data.get('area') or ""
+                
                 profile, created = Househelp.objects.update_or_create(
                     user=user, 
-                    defaults={'expected_salary': expected_salary}
+                    defaults={
+                        'expected_salary': expected_salary,
+                        'city': city,
+                        'area': area
+                    }
                 )
                 selected_skills = form.cleaned_data.get('skills')
                 if selected_skills:
                     profile.skills.set(selected_skills)
+
             
             # 3. Log the user in and redirect
             login(request, user)

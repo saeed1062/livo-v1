@@ -10,7 +10,6 @@ class SkillTagAdmin(admin.ModelAdmin):
 
 @admin.register(Househelp)
 class HousehelpAdmin(admin.ModelAdmin):
-    list_display = ('user', 'experience_years', 'expected_salary', 'rating')
-    list_filter = ('rating',)
+    list_display = ('user', 'expected_salary')
     search_fields = ('user__email', 'user__first_name', 'user__last_name')
     filter_horizontal = ('skills',) # Better UI for selecting multiple skills from master list

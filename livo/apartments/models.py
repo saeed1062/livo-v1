@@ -24,7 +24,12 @@ class Apartment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def active_residents(self):
+        return self.residents.filter(is_active=True).select_related('resident')
+
     def __str__(self):
+
         return f"{self.name} ({self.area}, {self.city})"
 
 class ResidentRecord(models.Model):

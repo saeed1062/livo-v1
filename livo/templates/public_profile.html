@@ -25,7 +25,12 @@
                         {% else %}
                             <span style="color: #64748b; font-style: italic;">No reviews yet</span>
                         {% endif %}
+                        
+                        {% if target_user.role == 'HOUSE_HELP' and profile %}
+                            <span style="margin-left: 10px; color: #1877f2; font-weight: 600;">&middot; 📍 {{ profile.area }}, {{ profile.city }}</span>
+                        {% endif %}
                     </p>
+
                 </div>
             </div>
             <div class="profile-actions">
@@ -60,11 +65,19 @@
                 </div>
                 {% if profile.expected_salary %}
                 <div class="salary-badge" style="text-align: right;">
+                    <div style="margin-bottom: 8px;">
+                        {% if profile.availability %}
+                            <span style="color: #27ae60; font-weight: 800; font-size: 0.8rem; background: #e8f8f0; padding: 4px 10px; border-radius: 6px;">● AVAILABLE</span>
+                        {% else %}
+                            <span style="color: #64748b; font-weight: 800; font-size: 0.8rem; background: #f1f5f9; padding: 4px 10px; border-radius: 6px;">● BUSY</span>
+                        {% endif %}
+                    </div>
                     <span style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 2px;">Expected Salary</span>
                     <strong style="font-size: 1.25rem; color: #ff4757;">৳{{ profile.expected_salary }}</strong>
                     <small style="color: #94a3b8; font-weight: 500;">/mo</small>
                 </div>
                 {% endif %}
+
             </div>
             <div class="tag-list">
                 {% if profile and profile.skills.all %}

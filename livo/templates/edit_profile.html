@@ -59,6 +59,27 @@
                         {{ form.gender }}
                     </div>
 
+                    {% if profile_form %}
+                        <div class="profile-separator" style="margin: 20px 0; border-top: 2px solid #f1f5f9; padding-top: 20px;">
+                            <h2 style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-bottom: 16px;">Role-Specific Details</h2>
+                        </div>
+                        
+                        {% for field in profile_form %}
+                            <div class="field-item {% if field.field.widget.input_type == 'checkbox' and not field.field.widget.allow_multiple_selected %}checkbox-row{% endif %}">
+                                <label>{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small style="color: #94a3b8; font-size: 0.75rem; margin-top: 4px;">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <span style="color: #ef4444; font-size: 0.75rem;">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                    {% endif %}
+
+
                     <div class="form-footer">
                         <button type="submit" class="btn btn-primary premium-glow">Apply Changes</button>
                         <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
@@ -88,6 +109,21 @@
     
     .field-item input, .field-item select { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; transition: all 0.2s; }
     .field-item input:focus { border-color: #ff4757; box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.1); outline: none; }
+
+    /* Checkbox Alignment Fixes */
+    .field-item input[type="checkbox"] { width: auto; align-self: flex-start; cursor: pointer; }
+    
+    /* For Multiple Checkboxes (Django renders these as <ul> or <label><input></label>) */
+    .field-item ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+    .field-item ul li { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #475569; }
+    .field-item ul li input { width: 18px; height: 18px; margin: 0; }
+    .field-item ul li label { text-transform: none; font-size: 0.9rem; font-weight: 500; color: #475569; letter-spacing: 0; cursor: pointer; }
+
+    /* Single Checkbox (like Availability) */
+    .checkbox-row { flex-direction: row !important; align-items: center; gap: 12px !important; cursor: pointer; }
+    .checkbox-row input { width: 20px !important; height: 20px !important; }
+    .checkbox-row label { margin-bottom: 0; order: 2; }
+
 
     /* Fix for Django's default file input appearance */
     .image-upload-wrapper input[type="file"] { padding: 8px; }

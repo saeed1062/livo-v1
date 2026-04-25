@@ -13,20 +13,11 @@ class SkillTag(models.Model):
 
 class Househelp(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='househelp')
-    experience_years = models.IntegerField(default=0)
-    
-    # Change 1: Implementation of Skills as ManyToManyField (Strategy 2)
+    city = models.CharField(max_length=100)
+    area = models.CharField(max_length=100, default="", help_text="e.g. Manhattan, Gulshan, or Downtown")
     skills = models.ManyToManyField(SkillTag, blank=True)
-    
-    # Change 2: Fixing Bio Help Text
-    bio = models.TextField(max_length=500, blank=True, null=True, help_text="A summary of your experience and the services you provide.")
-    
-    availability_schedule = models.CharField(max_length=255, blank=True, null=True)
+    availability = models.BooleanField(default=True)
     expected_salary = models.IntegerField(default=0)
     
-    # Change 5: Added by the user
-    rating = models.FloatField(default=0.0)
-    review_count = models.IntegerField(default=0)
-
     def __str__(self):
         return f"Help: {self.user.email}"

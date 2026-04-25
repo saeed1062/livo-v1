@@ -63,26 +63,52 @@
             
             <div class="building-list">
                 {% for residency in residencies %}
-                    <div class="building-card">
-                        <div class="building-info">
-                            <h4>{{ residency.apartment.name }}</h4>
-                            <span class="building-location">{{ residency.apartment.area }}, {{ residency.apartment.city }}</span>
+                    <div class="building-card-wrapper" style="margin-bottom: 24px;">
+                        <div class="building-card">
+                            <div class="building-info">
+                                <h4>{{ residency.apartment.name }}</h4>
+                                <span class="building-location">{{ residency.apartment.area }}, {{ residency.apartment.city }}</span>
+                            </div>
+                            <div class="building-actions" style="margin-left: auto; margin-right: 20px;">
+                                <form action="{% url 'leave_apartment' residency.apartment.id %}" method="POST" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger compact" onclick="return confirm('Are you sure you want to remove this apartment?');">Remove</button>
+                                </form>
+                            </div>
+                            <div class="building-id-badge">
+                                <span class="id-label">ID</span>
+                                <span class="id-number">LIVO-{{ residency.apartment.id|stringformat:"04d" }}</span>
+                            </div>
                         </div>
-                        <div class="building-actions" style="margin-left: auto; margin-right: 20px;">
-                            <form action="{% url 'leave_apartment' residency.apartment.id %}" method="POST" style="margin: 0;">
+                        
+                        <!-- Apartment Review Form -->
+                        <div class="apartment-review-box" style="margin-top: 12px; padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
+                            <h5 style="margin: 0 0 12px 0; font-size: 0.95rem; color: #0f172a;">Rate your living experience at {{ residency.apartment.name }}</h5>
+                            <form action="{% url 'add_review' %}" method="POST" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger compact" onclick="return confirm('Are you sure you want to remove this apartment?');">Remove</button>
+                                <input type="hidden" name="reviewed_apartment_id" value="{{ residency.apartment.id }}">
+                                
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <select name="rating" required style="padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                                        <option value="5">5 ⭐ Excellent</option>
+                                        <option value="4">4 ⭐ Good</option>
+                                        <option value="3">3 ⭐ Average</option>
+                                        <option value="2">2 ⭐ Poor</option>
+                                        <option value="1">1 ⭐ Terrible</option>
+                                    </select>
+                                </div>
+                                
+                                <input type="text" name="comment" placeholder="How is the environment, management, and facilities?" required style="flex-grow: 1; min-width: 250px; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                                
+                                <button type="submit" class="btn btn-primary compact" style="padding: 10px 20px; font-size: 0.85rem;">Submit Review</button>
                             </form>
-                        </div>
-                        <div class="building-id-badge">
-                            <span class="id-label">ID</span>
-                            <span class="id-number">LIVO-{{ residency.apartment.id|stringformat:"04d" }}</span>
                         </div>
                     </div>
                 {% empty %}
                     <p class="empty-text">You haven't joined any buildings yet.</p>
                 {% endfor %}
             </div>
+
 
             {% if residencies %}
                 <div class="one-apt-notice">
@@ -212,8 +238,37 @@
             </div>
         </div>
 
+        <!-- MY LISTINGS SECTION -->
+        <div class="data-section mt-30">
+            <div class="section-top">
+                <h3>My Active Listings</h3>
+                <p>Manage the rooms or services you've posted on the platform.</p>
+            </div>
+            
+            <div class="listings-grid" style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                {% for post in user_posts %}
+                    <div class="listing-item" style="padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="listing-main">
+                            <span class="role-badge" style="background:#e0f2fe; color:#0369a1; font-size: 0.65rem; margin-bottom: 8px;">{{ post.get_type_display }}</span>
+                            <h4 style="margin: 0 0 4px 0; color: #0f172a;">{{ post.title }}</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: #64748b;">${{ post.price }} &middot; Posted on {{ post.created_at|date:"M d, Y" }}</p>
+                        </div>
+                        <div class="listing-actions" style="display: flex; gap: 10px;">
+                            <a href="{% url 'edit_post' post.id %}" class="btn btn-secondary compact" style="font-size: 0.8rem; padding: 8px 16px;">Edit</a>
+                            <form action="{% url 'delete_post' post.id %}" method="POST" style="margin: 0;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger compact" style="font-size: 0.8rem; padding: 8px 16px;" onclick="return confirm('Delete this listing? This cannot be undone.');">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="empty-text">You haven't posted any listings yet.</p>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
+
 
 <style>
     .mt-30 { margin-top: 30px; }

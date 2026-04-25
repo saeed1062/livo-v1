@@ -45,9 +45,37 @@
                     </span>
                 </div>
             </div>
+        <!-- MY LISTINGS SECTION -->
+        <div class="data-section mt-30">
+            <div class="section-top">
+                <h3>My Active Offerings</h3>
+                <p>Manage the meals or items you've posted for the community.</p>
+            </div>
+            
+            <div class="listings-grid" style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                {% for post in user_posts %}
+                    <div class="listing-item" style="padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="listing-main">
+                            <span class="role-badge" style="background:#fff4e5; color:#f39c12; font-size: 0.65rem; margin-bottom: 8px;">{{ post.get_type_display }}</span>
+                            <h4 style="margin: 0 0 4px 0; color: #0f172a;">{{ post.title }}</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: #64748b;">${{ post.price }} &middot; Posted on {{ post.created_at|date:"M d, Y" }}</p>
+                        </div>
+                        <div class="listing-actions" style="display: flex; gap: 10px;">
+                            <a href="{% url 'edit_post' post.id %}" class="btn btn-secondary compact" style="font-size: 0.8rem; padding: 8px 16px;">Edit</a>
+                            <form action="{% url 'delete_post' post.id %}" method="POST" style="margin: 0;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger compact" style="font-size: 0.8rem; padding: 8px 16px;" onclick="return confirm('Delete this offering?');">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="empty-text">You haven't posted any offerings yet.</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
+
 
 <style>
     .dashboard-simple { background: #fafbfc; min-height: 90vh; padding: 60px 0; font-family: 'Inter', sans-serif; }
@@ -78,5 +106,9 @@
     .btn { padding: 12px 24px; border-radius: 12px; font-weight: 700; text-decoration: none; text-align: center; }
     .btn-primary { background: #f39c12; color: white; border: none; }
     .btn-secondary { background: #f1f5f9; color: #475569; border: none; }
+    .btn-danger { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+    .btn.compact { padding: 12px 20px; }
+    .mt-30 { margin-top: 30px; }
 </style>
+
 {% endblock %}
