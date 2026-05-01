@@ -4,7 +4,7 @@
 {% block content %}
 <div class="social-feed-page">
     <div class="container container-feed-layout">
-        
+
         <!-- SIDEBAR (Fixed Filters) -->
         <aside class="feed-sidebar">
             <div class="sidebar-sticky">
@@ -21,7 +21,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
                         <h3>Refine Feed</h3>
                     </div>
-                    
+
                     <form method="GET" action="{% url 'feed' post_type %}" class="sidebar-filter-form">
                         {% if post_type == 'ROOM' %}
                             <div class="input-group">
@@ -35,7 +35,7 @@
                             <div class="input-group">
                                 <label>Max Budget</label>
                                 <div class="price-input-wrapper">
-                                    <span class="currency">$</span>
+                                    <span class="currency">৳</span>
                                     <input type="number" name="max_price" placeholder="Rent limit" value="{{ request.GET.max_price }}">
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                                 <div class="checkbox-group" style="display: flex; flex-direction: column; gap: 8px; max-height: 150px; overflow-y: auto; padding: 10px; background: #f8fafc; border-radius: 12px; border: 2px solid #f1f5f9;">
                                     {% for skill in skills %}
                                         <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #475569; cursor: pointer; text-transform: none; letter-spacing: 0;">
-                                            <input type="checkbox" name="skills" value="{{ skill.id }}" 
+                                            <input type="checkbox" name="skills" value="{{ skill.id }}"
                                                 {% if skill.id in selected_skills %}checked{% endif %}
                                                 style="width: 16px; height: 16px;">
                                             {{ skill.name }}
@@ -82,7 +82,7 @@
                             </div>
 
                         {% endif %}
-                        
+
                         <div class="sidebar-actions">
                             <button type="submit" class="btn btn-apply">Apply Filters</button>
                             <a href="{% url 'feed' post_type %}" class="link-clear">Reset All</a>
@@ -145,7 +145,7 @@
                             </div>
 
 
-                            
+
                             <div class="tag-list help-skills">
                                 {% for skill in help.skills.all %}
                                     <span class="livo-tag small-tag">{{ skill.name }}</span>
@@ -202,12 +202,12 @@
                                 <h2 class="social-post-title" style="margin-bottom: 0;">{{ post.title }}</h2>
                                 {% if post.price %}
                                     <div style="background: #e6f2ff; color: #1877f2; padding: 4px 12px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; flex-shrink: 0; margin-left: 12px;">
-                                        ${{ post.price }}{% if post.type == 'ROOM' %} /mo{% endif %}
+                                        ৳{{ post.price }}{% if post.type == 'ROOM' %} /mo{% endif %}
                                     </div>
                                 {% endif %}
                             </div>
                             <p class="social-post-text">{{ post.description }}</p>
-                            
+
                             {% if post.type == 'ROOM' and post.apartment %}
                                 <div class="post-building-info" style="margin-top: 16px; padding: 16px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
                                     <!-- Building Link -->
@@ -328,7 +328,7 @@
                                     </div>
                                 {% endfor %}
                             </div>
-                            
+
                             <!-- NEW COMMENT INPUT -->
                             <div class="add-comment-box">
                                 <div class="comment-avatar circle mini">
@@ -352,7 +352,6 @@
                 {% empty %}
                     <div class="empty-feed">
                         <p>No posts available in this community yet.</p>
-                        <a href="{% url 'create_post' %}" class="btn btn-primary">Start the conversation</a>
                     </div>
                 {% endfor %}
             {% endif %}
@@ -387,7 +386,7 @@
             if (data.status === 'success') {
                 const countElement = document.getElementById(`likes-count-${postId}`);
                 countElement.innerText = data.likes_count;
-                
+
                 // Add pop effect
                 const btn = document.querySelector(`#post-${postId} .like-btn`);
                 btn.classList.add('liked-animate');
@@ -434,7 +433,7 @@
     function addCommentToUI(postId, comment) {
         const list = document.getElementById(`comments-list-${postId}`);
         const countEl = document.getElementById(`comments-count-${postId}`);
-        
+
         const commentHtml = `
             <div class="comment-item fade-in">
                 <div class="comment-avatar circle mini">
@@ -463,22 +462,22 @@
     }
 
     .social-feed-page { background: var(--fb-bg); min-height: 100vh; padding: 40px 0; }
-    
+
     /* Layout Update: Grid Sidebar + Main Feed */
-    .container-feed-layout { 
-        max-width: 1020px; 
-        margin: 0 auto; 
-        padding: 0 15px; 
-        display: flex; 
+    .container-feed-layout {
+        max-width: 1020px;
+        margin: 0 auto;
+        padding: 0 15px;
+        display: flex;
         align-items: flex-start;
         gap: 30px;
     }
 
     .feed-sidebar { width: 320px; flex-shrink: 0; }
     .feed-main-content { flex-grow: 1; max-width: 680px; }
-    
-    .sidebar-sticky { 
-        position: sticky; 
+
+    .sidebar-sticky {
+        position: sticky;
         top: 20px;
     }
 
@@ -495,23 +494,23 @@
     .sidebar-filter-form { display: flex; flex-direction: column; gap: 20px; }
     .input-group { display: flex; flex-direction: column; gap: 8px; }
     .input-group label { font-size: 0.75rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
-    
-    .input-group input, .input-group select { 
-        width: 100%; 
-        padding: 12px 16px; 
-        border-radius: 12px; 
-        border: 2px solid #f1f5f9; 
-        background: #f8fafc; 
-        font-size: 0.95rem; 
-        color: #0f172a; 
-        transition: all 0.2s; 
+
+    .input-group input, .input-group select {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 2px solid #f1f5f9;
+        background: #f8fafc;
+        font-size: 0.95rem;
+        color: #0f172a;
+        transition: all 0.2s;
     }
-    
-    .input-group input:focus, .input-group select:focus { 
-        outline: none; 
-        border-color: #1877f2; 
-        background: white; 
-        box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1); 
+
+    .input-group input:focus, .input-group select:focus {
+        outline: none;
+        border-color: #1877f2;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
     }
 
     .price-input-wrapper { position: relative; display: flex; align-items: center; }
@@ -524,17 +523,17 @@
     .link-clear { text-align: center; font-size: 0.85rem; color: #64748b; text-decoration: none; font-weight: 600; }
     .link-clear:hover { color: #ef4444; }
 
-    .sidebar-promo-btn { 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        gap: 12px; 
-        background: linear-gradient(135deg, #1877f2 0%, #0561d6 100%); 
-        color: white; 
-        padding: 20px; 
-        border-radius: 20px; 
-        text-decoration: none; 
-        transition: all 0.3s; 
+    .sidebar-promo-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: linear-gradient(135deg, #1877f2 0%, #0561d6 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        transition: all 0.3s;
     }
     .sidebar-promo-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 20px rgba(24, 119, 242, 0.25); }
     .sidebar-promo-btn span { font-size: 1.5rem; font-weight: 300; }
@@ -549,7 +548,7 @@
     .author-info { display: flex; align-items: center; gap: 10px; }
     .circle { border-radius: 50%; overflow: hidden; background: #e4e6eb; }
     .author-avatar { width: 40px; height: 40px; }
-    .author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .avatar-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #65676b; }
 
     .author-details { display: flex; flex-direction: column; }
