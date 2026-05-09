@@ -158,7 +158,13 @@ def signup(request):
             
             if role == 'ROOMMATE':
                 # Create Lifestyle Profile and link tags
-                profile = LifestylePreference.objects.create(user=user)
+                edu = form.cleaned_data.get('educational_institution')
+                work = form.cleaned_data.get('workplace')
+                profile = LifestylePreference.objects.create(
+                    user=user,
+                    educational_institution=edu,
+                    workplace=work
+                )
                 selected_preferences = form.cleaned_data.get('preferences')
                 if selected_preferences:
                     profile.preferences.set(selected_preferences)

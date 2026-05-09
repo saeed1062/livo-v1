@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 from users.models import User
 
 # Create your models here.
@@ -17,7 +18,7 @@ class Househelp(models.Model):
     area = models.CharField(max_length=100, default="", help_text="e.g. Manhattan, Gulshan, or Downtown")
     skills = models.ManyToManyField(SkillTag, blank=True)
     availability = models.BooleanField(default=True)
-    expected_salary = models.IntegerField(default=0)
+    expected_salary = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     
     def __str__(self):
         return f"Help: {self.user.email}"

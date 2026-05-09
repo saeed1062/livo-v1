@@ -52,7 +52,7 @@ class UserSignUpForm(UserCreationForm):
     expected_salary = forms.IntegerField(
         required=False,
         min_value=0,
-        widget=forms.NumberInput(attrs={'placeholder': 'Enter expected salary (e.g. 8000)', 'class': 'form-control'})
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter expected salary (e.g. 8000)', 'class': 'form-control', 'min': '0'})
     )
 
     city = forms.CharField(
@@ -63,6 +63,16 @@ class UserSignUpForm(UserCreationForm):
     area = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={'placeholder': 'e.g. Gulshan', 'class': 'form-control'})
+    )
+
+    educational_institution = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'e.g. Dhaka University', 'class': 'form-control'})
+    )
+
+    workplace = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'e.g. Google or Freelance', 'class': 'form-control'})
     )
 
 
